@@ -23,10 +23,7 @@ DOWNLOADPATH := $(shell cat DOWNLOADPATH)
 # folder to locally save the results
 BUILD_DIR := $(BUILD_RESULTS)/$(OUTPUT_NAME)/$(DATE)_$(COMMIT_HASH)
 
-# example for creating a Docker image
-#default: download_from_S3 download_from_http extract dockerbuild dockersave dockerpush 
-# example for creating a binary 
-#default: compile copy_binary_to_upload_folder build_debian_package upload_to_packagecloud
+default: download_from_S3 extract dockerbuild dockerpush 
 
 download_from_S3:
 	aws s3 cp s3://$(AWS_BUCKET)/$(DOWNLOADPATH) ./binary.tar.gz
