@@ -36,6 +36,7 @@ extract:
 	mkdir content/
 	tar xzf binary.tar.gz -C content/
 	ls -la content/
+	mv content/dockerui content/dist/dockerui
 
 # build a docker image
 dockerbuild:
