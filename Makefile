@@ -23,10 +23,10 @@ DOWNLOADPATH := $(shell cat DOWNLOADPATH)
 # folder to locally save the results
 BUILD_DIR := $(BUILD_RESULTS)/$(OUTPUT_NAME)/$(DATE)_$(COMMIT_HASH)
 
+
 ifneq '$(REGISTRY_URL)' ''
-FOO=$(strip $(REGISTRY_URL))
-REGISTRY_URL+=$(FOO)/
-#REGISTRY_URL+=/
+FOO:=$(strip $(REGISTRY_URL))/
+REGISTRY_URL=$(FOO)
 endif
 
 default: download_from_S3 extract dockerbuild dockerpush 
@@ -53,21 +53,21 @@ dockerbuild:
 # push the docker image to a docker registry
 dockerpush:
 	# push VERSION
-	docker tag -f $(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(VERSION)
-	docker push $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(VERSION)
+	docker tag -f $(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(VERSION)"
+	docker push "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(VERSION)"
 
 	# push DATE COMMIT_HASH
-	docker tag -f $(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(DATE)_$(COMMIT_HASH)
-	docker push $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(DATE)_$(COMMIT_HASH)
+	docker tag -f $(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(DATE)_$(COMMIT_HASH)"
+	docker push "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(DATE)_$(COMMIT_HASH)"
 	
 	# push latest
-	docker tag -f $(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest
-	docker push $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest
+	docker tag -f $(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest"
+	docker push "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest"
 
 	# remove tags
-	docker rmi $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(VERSION) || true
-	docker rmi $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(DATE)_$(COMMIT_HASH) || true
-	docker rmi $(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest || true
+	docker rmi "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(VERSION)" || true
+	docker rmi "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):$(DATE)_$(COMMIT_HASH)" || true
+	docker rmi "$(REGISTRY_URL)$(REGISTRY_NAMESPACE)/$(OUTPUT_NAME):latest" || true
 
 # save the image as tar
 dockersave:
