@@ -1,33 +1,71 @@
-image: registry.hypriot.com/armbuildchain/dockerindocker
-docker:
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-git:
-  path: github.com/hypriot/rpi-dockerui
-script:
-  - echo "+++++ start docker daemon +++++"
-  - wrapdocker &
-  - sleep 5
-  - docker login --username=$$REGISTRY_USER --password=$$REGISTRY_PASSWORD --email=$$REGISTRY_USER_EMAIL $$REGISTRY_URL
-  - echo "+++++ build docker image +++++"
-  - make
-  - echo "+++++ stop docker daemon +++++"
-  - start-stop-daemon --stop --pidfile "/var/run/docker.pid"
-  - echo -e "#####################\n***** COMPLETED *****\n#####################"
+debug: true
+
+build:
+  image: firecyberice/rpi-docker:1.10.0-dev
+  extra_hosts:
+    - docker
+  environment:
+    - DOCKER_HOST=tcp://localhost:2375
+  commands:
+    - apk update && apk add git
+    - export VERSION=$(cat VERSION)
+    - export BUILD_RESULTS=/drone/src/buildresult
+    - git clone -b ${VERSION} https://github.com/crosbymichael/dockerui
+    - export BUILD_DIR=${BUILD_RESULTS}/dockerui/$(date +"%Y-%m-%d_%H%M")_$(git rev-parse --short HEAD)
+    - mkdir -p ${BUILD_DIR}
+    - cd dockerui
+    - rm -r dist/ && mkdir dist/
+    - docker run --rm -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ hypriot/rpi-golang:1.4.2 bash -c "cd /gopath/src/github.com/crosbymichael/dockerui && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' ."
+    - CID=$(docker run --rm -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
+    - echo "+++++ docker runs completed +++++"
+    - pwd && ls -la /
+    - cp -r * /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - tar czf ${BUILD_DIR}/dockerui.tar.gz dockerui dist/
+    - cd ${BUILD_DIR} && sha256sum dockerui.tar.gz > dockerui.tar.gz.sha256
+    - echo ${BUILD_DIR}
+    - pwd && ls -la ${BUILD_DIR}
+    - pwd && ls -la /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - export IMAGE_DIR=${BUILD_RESULTS}/docker-images/${PACKAGE_NAME}/${TIMESTAMP}_${REPO}   
+    - mkdir -p ${IMAGE_DIR}
+    - ln -s ${IMAGE_DIR} /drone/src/buildresult/latest
+
+
+compose:
+  docker:
+    privileged: true
+    image: firecyberice/rpi-docker:1.10.0-dev-dind
+
 publish:
+  docker:
+#    environment:
+#      - DOCKER_LAUNCH_DEBUG=true
+    username: $$DOCKER_USER
+    password: $$DOCKER_PASS
+    email: $$DOCKER_EMAIL
+    repo: hypriot/rpi-dockerui
+    tag:
+      - v0.7.0
+      - latest
+    save:
+      file: /drone/src/buildresult/latest/dockerui.tar
+
   s3:
     acl: public-read
     region: $$AWS_DEFAULT_REGION
     bucket: $$AWS_BUCKET
     access_key: $$AWS_ACCESS_KEY_ID
     secret_key: $$AWS_SECRET_ACCESS_KEY
-    source: $$BUILD_RESULTS
-    target: $$S3_PREFIX
+    source: /drone/src/buildresult
+    target: /
     recursive: true
+
 notify:
   slack:
     webhook_url: $$SLACK_WEBHOOK_URL
-    on_started: false
-    on_success: true
-    on_failure: true
+    channel: buildstatus
+    username: Drone
+    when:
+      started: false
+      success: true
+      failure: true
 
