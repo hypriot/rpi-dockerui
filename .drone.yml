@@ -25,6 +25,8 @@ build:
     - echo ${BUILD_DIR}
     - pwd && ls -la ${BUILD_DIR}
     - pwd && ls -la /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - export TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
+    - export REPO=$(git rev-parse --short HEAD)
     - export IMAGE_DIR=${BUILD_RESULTS}/docker-images/${PACKAGE_NAME}/${TIMESTAMP}_${REPO}   
     - mkdir -p ${IMAGE_DIR}
     - ln -s ${IMAGE_DIR} /drone/src/buildresult/latest
