@@ -13,7 +13,7 @@ build:
     - export TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
     - export REPO=$(git rev-parse --short HEAD)
     - git clone -b ${VERSION} https://github.com/crosbymichael/dockerui
-    - export BUILD_DIR=${BUILD_RESULTS}/dockerui/${TIMESTAMP}_${REPO
+    - export BUILD_DIR=${BUILD_RESULTS}/dockerui/${TIMESTAMP}_${REPO}
     - mkdir -p ${BUILD_DIR}
     - cd dockerui
     - rm -r dist/ && mkdir dist/
