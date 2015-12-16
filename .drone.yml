@@ -13,7 +13,7 @@ build:
     - export TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
     - export REPO=$(git rev-parse --short HEAD)
     - git clone -b ${VERSION} https://github.com/crosbymichael/dockerui
-    - export BUILD_DIR=${BUILD_RESULTS}/dockerui/${TIMESTAMP}_${REPO}
+    - export BUILD_DIR=${BUILD_RESULTS}/arm-binaries/dockerui/${TIMESTAMP}_${REPO}
     - mkdir -p ${BUILD_DIR}
     - cd dockerui
     - rm -r dist/ && mkdir dist/
@@ -31,9 +31,6 @@ build:
     - cd ${BUILD_DIR} && sha256sum dockerui.tar.gz > dockerui.tar.gz.sha256
     - echo ${BUILD_DIR}
     - ls -la ${BUILD_DIR}
-    - export IMAGE_DIR=${BUILD_RESULTS}/docker-images/${PACKAGE_NAME}/${TIMESTAMP}_${REPO}
-    - mkdir -p ${IMAGE_DIR}
-    - ln -s ${IMAGE_DIR} /drone/src/buildresult/latest
 
 
 compose:
@@ -53,7 +50,7 @@ publish:
       - v0.7.0
       - latest
     save:
-      file: /drone/src/buildresult/latest/dockerui.tar
+      file: /drone/src/buildresult/docker-images/dockerui_image.tar
     when:
       branch: master
 
