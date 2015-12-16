@@ -1,4 +1,4 @@
-debug: true
+#debug: true
 
 build:
   image: firecyberice/rpi-docker:1.10.0-dev
@@ -15,10 +15,13 @@ build:
     - mkdir -p ${BUILD_DIR}
     - cd dockerui
     - rm -r dist/ && mkdir dist/
+    - echo "+++++ build binary +++++"
     - docker run --rm -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ hypriot/rpi-golang:1.4.2 bash -c "cd /gopath/src/github.com/crosbymichael/dockerui && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' ."
+    - echo "+++++ build website +++++"
     - CID=$(docker run --rm -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
     - echo "+++++ docker runs completed +++++"
     - pwd && ls -la /
+    - echo "+++++ create tar +++++"
     - cp -r * /drone/src/github.com/hypriot/rpi-dockerui/content/
     - tar czf ${BUILD_DIR}/dockerui.tar.gz dockerui dist/
     - cd ${BUILD_DIR} && sha256sum dockerui.tar.gz > dockerui.tar.gz.sha256
@@ -50,6 +53,8 @@ publish:
       - latest
     save:
       file: /drone/src/buildresult/latest/dockerui.tar
+    when:
+      branch: master
 
   s3:
     acl: public-read
@@ -60,6 +65,8 @@ publish:
     source: /drone/src/buildresult
     target: /
     recursive: true
+    when:
+      branch: master
 
 notify:
   slack:
