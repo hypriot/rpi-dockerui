@@ -10,8 +10,10 @@ build:
     - apk update && apk add git
     - export VERSION=$(cat VERSION)
     - export BUILD_RESULTS=/drone/src/buildresult
+    - export TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
+    - export REPO=$(git rev-parse --short HEAD)
     - git clone -b ${VERSION} https://github.com/crosbymichael/dockerui
-    - export BUILD_DIR=${BUILD_RESULTS}/dockerui/$(date +"%Y-%m-%d_%H%M")_$(git rev-parse --short HEAD)
+    - export BUILD_DIR=${BUILD_RESULTS}/dockerui/${TIMESTAMP}_${REPO
     - mkdir -p ${BUILD_DIR}
     - cd dockerui
     - rm -r dist/ && mkdir dist/
@@ -20,17 +22,16 @@ build:
     - echo "+++++ build website +++++"
     - CID=$(docker run --rm -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
     - echo "+++++ docker runs completed +++++"
-    - pwd && ls -la /
-    - echo "+++++ create tar +++++"
+    - mkdir -p /drone/src/github.com/hypriot/rpi-dockerui/content/
     - cp -r * /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - ls -la /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - pwd
+    - echo "+++++ create tar +++++"
     - tar czf ${BUILD_DIR}/dockerui.tar.gz dockerui dist/
     - cd ${BUILD_DIR} && sha256sum dockerui.tar.gz > dockerui.tar.gz.sha256
     - echo ${BUILD_DIR}
-    - pwd && ls -la ${BUILD_DIR}
-    - pwd && ls -la /drone/src/github.com/hypriot/rpi-dockerui/content/
-    - export TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
-    - export REPO=$(git rev-parse --short HEAD)
-    - export IMAGE_DIR=${BUILD_RESULTS}/docker-images/${PACKAGE_NAME}/${TIMESTAMP}_${REPO}   
+    - ls -la ${BUILD_DIR}
+    - export IMAGE_DIR=${BUILD_RESULTS}/docker-images/${PACKAGE_NAME}/${TIMESTAMP}_${REPO}
     - mkdir -p ${IMAGE_DIR}
     - ln -s ${IMAGE_DIR} /drone/src/buildresult/latest
 
