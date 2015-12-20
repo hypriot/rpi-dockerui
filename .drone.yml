@@ -16,7 +16,6 @@ build:
     - export BUILD_DIR=${BUILD_RESULTS}/arm-binaries/dockerui/${TIMESTAMP}_${REPO}
     - mkdir -p ${BUILD_DIR}
     - cd dockerui
-    - rm -r dist/ && mkdir dist/
     - echo "+++++ build binary +++++"
     - CIDbin=$(docker run -dit -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ hypriot/rpi-golang:1.4.2 bash -c "cd /gopath/src/github.com/crosbymichael/dockerui && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' .")
     - echo "+++++ build website +++++"
@@ -24,7 +23,8 @@ build:
     - echo "+++++ docker runs completed +++++"
     - pwd && ls -la
     - mkdir -p /drone/src/github.com/hypriot/rpi-dockerui/content/
-    - cp -r * /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - cp dockerui /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - cp -r dist /drone/src/github.com/hypriot/rpi-dockerui/content/
     - ls -la /drone/src/github.com/hypriot/rpi-dockerui/content/
     - pwd
     - echo "+++++ create tar +++++"
