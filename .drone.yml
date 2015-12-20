@@ -24,7 +24,7 @@ build:
     - pwd && ls -la
     - mkdir -p /drone/src/github.com/hypriot/rpi-dockerui/content/
     - cp dockerui /drone/src/github.com/hypriot/rpi-dockerui/content/
-    - cp -r dist /drone/src/github.com/hypriot/rpi-dockerui/content/
+    - cp -r dist/* /drone/src/github.com/hypriot/rpi-dockerui/content/
     - ls -la /drone/src/github.com/hypriot/rpi-dockerui/content/
     - pwd
     - echo "+++++ create tar +++++"
