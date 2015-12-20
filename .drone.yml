@@ -18,9 +18,9 @@ build:
     - cd dockerui
     - rm -r dist/ && mkdir dist/
     - echo "+++++ build binary +++++"
-    - docker run --rm -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ hypriot/rpi-golang:1.4.2 bash -c "cd /gopath/src/github.com/crosbymichael/dockerui && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' ."
+    - CIDbin=$(docker run -dit -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ hypriot/rpi-golang:1.4.2 bash -c "cd /gopath/src/github.com/crosbymichael/dockerui && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' .")
     - echo "+++++ build website +++++"
-    - CID=$(docker run --rm -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
+    - CIDweb=$(docker run -dit -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
     - echo "+++++ docker runs completed +++++"
     - pwd && ls -la
     - mkdir -p /drone/src/github.com/hypriot/rpi-dockerui/content/
