@@ -7,7 +7,7 @@ build:
   environment:
     - DOCKER_HOST=tcp://localhost:2375
   commands:
-    - apk update && apk add git
+    - apk update && apk add git file
     - export VERSION=$(cat VERSION)
     - export BUILD_RESULTS=/drone/src/buildresult
     - export TIMESTAMP=$(date +"%Y-%m-%d_%H%M")
@@ -19,9 +19,11 @@ build:
 #    - echo "+++++ remove existing binary and dist folder +++++"
 #    - rm -rf dist dockerui
 #    - mkdir dist/
+#    - rm -f dist/dockerui
     - echo "+++++ build binary +++++"
     - CIDbin=$(docker run -dit -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ hypriot/rpi-golang:1.4.2 bash -c "cd /gopath/src/github.com/crosbymichael/dockerui && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' .")
     - echo "+++++ build website +++++"
+#    - cp dockerui dist/
     - CIDweb=$(docker run -dit -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
     - echo "+++++ docker runs completed +++++"
     - pwd && ls -la
