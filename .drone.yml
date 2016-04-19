@@ -1,7 +1,7 @@
 #debug: true
 
 build:
-  image: firecyberice/rpi-docker:1.10.1
+  image: firecyberice/rpi-docker:1.10.0-dev
   extra_hosts:
     - docker
   environment:
@@ -45,7 +45,7 @@ build:
 compose:
   docker:
     privileged: true
-    image: firecyberice/rpi-docker:1.10.1-dind
+    image: firecyberice/rpi-docker:1.10.0-dev-dind
 
 publish:
   docker:
