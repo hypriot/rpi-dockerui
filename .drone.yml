@@ -1,7 +1,7 @@
 #debug: true
 
 build:
-  image: firecyberice/rpi-docker:1.10.0-dev
+  image: firecyberice/rpi-docker:1.10.1
   extra_hosts:
     - docker
   environment:
@@ -45,7 +45,7 @@ build:
 compose:
   docker:
     privileged: true
-    image: firecyberice/rpi-docker:1.10.0-dev-dind
+    image: firecyberice/rpi-docker:1.10.1-dind
 
 publish:
   docker:
@@ -56,7 +56,7 @@ publish:
     email: $$DOCKER_EMAIL
     repo: hypriot/rpi-dockerui
     tag:
-      - v0.9.0
+      - v0.10.1
       - latest
     save:
       file: /drone/src/buildresult/docker-images/dockerui_image.tar
@@ -84,4 +84,3 @@ notify:
       started: false
       success: true
       failure: true
-
