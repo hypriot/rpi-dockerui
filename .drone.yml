@@ -56,7 +56,7 @@ publish:
     email: $$DOCKER_EMAIL
     repo: hypriot/rpi-dockerui
     tag:
-      - v0.9.0
+      - v0.10.1
       - latest
     save:
       file: /drone/src/buildresult/docker-images/dockerui_image.tar
@@ -84,4 +84,3 @@ notify:
       started: false
       success: true
       failure: true
-
