@@ -15,7 +15,7 @@ build:
     - git clone -b ${VERSION} https://github.com/kevana/ui-for-docker
     - export BUILD_DIR=${BUILD_RESULTS}/arm-binaries/dockerui/${TIMESTAMP}_${REPO}
     - mkdir -p ${BUILD_DIR}
-    - cd dockerui
+    - cd ui-for-docker
 #    - echo "+++++ remove existing binary and dist folder +++++"
 #    - rm -rf dist dockerui
 #    - mkdir dist/
