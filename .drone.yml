@@ -21,7 +21,7 @@ build:
 #    - mkdir dist/
 #    - rm -f dist/dockerui
     - echo "+++++ build binary +++++"
-    - CIDbin=$(docker run -dit -v $(pwd):/gopath/src/github.com/kevana/ui-for-docker/ -w /gopath/src/github.com/kevana/ui-for-docker hypriot/rpi-golang:1.4.2 bash -c "CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' .")
+    - CIDbin=$(docker run -dit -v $(pwd):/gopath/src/github.com/crosbymichael/dockerui/ -w /gopath/src/github.com/crosbymichael/dockerui hypriot/rpi-golang:1.4.2 bash -c "go get -v -d ./... && CGO_ENABLED=0 go build -a --installsuffix cgo --ldflags='-s' .")
     - echo "+++++ build website +++++"
 #    - cp dockerui dist/
     - CIDweb=$(docker run -dit -v $(pwd):/dockerui/ hypriot/rpi-node:4.1.2 bash -c "cd /dockerui && npm install -g grunt-cli && npm install && grunt build")
